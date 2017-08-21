@@ -17,12 +17,11 @@ class ListBooks extends Component{
         const currently_read = books.filter((book) => book.shelf === 'currentlyReading');
         const want_read = books.filter((book) => book.shelf === 'wantToRead');
         const already_read = books.filter((book) => book.shelf === 'read');
-
+        /*
+         Passing the categories of book to each div and then calling Book component
+         */
         return (
             <div>
-               /*
-                Passing the categories of book to each div and then calling Book component
-                */
             <div className="bookshelf">
                 <h2 className="bookshelf-title">Currently Reading</h2>
                 <div className="bookshelf-books">

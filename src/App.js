@@ -47,7 +47,7 @@ updateQuery = (query,maxResult) => {
 
  */
   updateShelf = (book,val) => {
-    this.setState((state) =>({
+      this.setState((state) =>({
       books: state.books.map((_book) => {
         if (_book.id === book.id) {
             _book.shelf = val;
@@ -74,18 +74,29 @@ updateQuery = (query,maxResult) => {
     })
   }
 
+  /*
+    Refreshes the books page when close search
+   */
 
+  refreshBooks=()=>{
+        BooksAPI.getAll().then((books) => {
+            this.setState({books});
+
+        })
+    }
+
+
+    /*
+     Render function includes routes for search and book listing
+     */
   render() {
 
     const maxResult = 20;
     const booksList = this.state.books;
+
+
     return (
         <div className="app">
-
-            /*
-             Route for search
-
-             */
 
           <Route path="/search" render={()=>(
 
@@ -94,7 +105,7 @@ updateQuery = (query,maxResult) => {
                   <Link to={{
                       pathname: '/',
                       state: { books: this.state.books }
-                  }} className="close-search">Close</Link>
+                  }} className="close-search" onClick={this.refreshBooks}>Close</Link>
                   <div className="search-books-input-wrapper">
                     <input type="text" placeholder="Search by title or author"
                            onChange={(event)=> this.updateQuery(event.target.value,maxResult)}/>
@@ -112,10 +123,6 @@ updateQuery = (query,maxResult) => {
 
           )}
           />
-            /*
-             Route for books listing
-
-             */
           <Route exact path="/" render={()=>(
               <div className="list-books">
                 <div className="list-books-title">
