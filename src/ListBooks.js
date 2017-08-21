@@ -1,16 +1,28 @@
 import React,{Component} from 'react';
+import Book from './Book'
 
 class ListBooks extends Component{
 
+    handleBookChangeEvent = (book,val) => {
+        this.props.onSelectBook(book,val);
+    }
+
     render(){
-        const { books , onSelectBook } = this.props;
+        const { books } = this.props;
+
+        /*
+          Based on the shelf category filtering out the books before rendering
+         */
+
         const currently_read = books.filter((book) => book.shelf === 'currentlyReading');
         const want_read = books.filter((book) => book.shelf === 'wantToRead');
         const already_read = books.filter((book) => book.shelf === 'read');
 
-
         return (
             <div>
+               /*
+                Passing the categories of book to each div and then calling Book component
+                */
             <div className="bookshelf">
                 <h2 className="bookshelf-title">Currently Reading</h2>
                 <div className="bookshelf-books">
@@ -18,26 +30,9 @@ class ListBooks extends Component{
 
                         {currently_read.map((book) =>(
 
-                            <li key={book.id}>
-                                <div className="book">
-                                    <div className="book-top">
-                                        <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})`}}></div>
-                                        <div className="book-shelf-changer">
-                                            <select value="currentlyReading" onChange={(event) => onSelectBook(book,event.target.value)}>
-                                                <option value="none" disabled>Move to...</option>
-                                                <option value="currentlyReading">Currently Reading</option>
-                                                <option value="wantToRead">Want to Read</option>
-                                                <option value="read">Read</option>
-                                                <option value="none">None</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="book-title">{book.title}</div>
-                                    <div className="book-authors">{book.authors[0]}</div>
-                                </div>
-                            </li>
+                                <Book key={book.id} book={book} handleBookChangeEvent={this.handleBookChangeEvent}/>
                         )
-                        )  }
+                        ) }
 
                     </ol>
                 </div>
@@ -48,24 +43,7 @@ class ListBooks extends Component{
                     <ol className="books-grid">
                         {want_read.map((book) =>(
 
-                                <li key={book.id}>
-                                    <div className="book">
-                                        <div className="book-top">
-                                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                                            <div className="book-shelf-changer">
-                                                <select value="wantToRead" onChange={(event) => onSelectBook(book,event.target.value)}>
-                                                    <option value="none" disabled>Move to...</option>
-                                                    <option value="currentlyReading">Currently Reading</option>
-                                                    <option value="wantToRead">Want to Read</option>
-                                                    <option value="read">Read</option>
-                                                    <option value="none">None</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="book-title">{book.title}</div>
-                                        <div className="book-authors">{book.authors[0]}</div>
-                                    </div>
-                                </li>
+                            <Book key={book.id}  book={book} handleBookChangeEvent={this.handleBookChangeEvent}/>
                             )
                         )  }
                     </ol>
@@ -77,24 +55,7 @@ class ListBooks extends Component{
                     <ol className="books-grid">
                         {already_read.map((book) =>(
 
-                                <li key={book.id}>
-                                    <div className="book">
-                                        <div className="book-top">
-                                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                                            <div className="book-shelf-changer">
-                                                <select value="read" onChange={(event) => onSelectBook(book,event.target.value)}>
-                                                    <option value="none" disabled>Move to...</option>
-                                                    <option value="currentlyReading">Currently Reading</option>
-                                                    <option value="wantToRead">Want to Read</option>
-                                                    <option value="read">Read</option>
-                                                    <option value="none">None</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="book-title">{book.title}</div>
-                                        <div className="book-authors">{book.authors[0]}</div>
-                                    </div>
-                                </li>
+                            <Book key={book.id}  book={book} handleBookChangeEvent={this.handleBookChangeEvent}/>
                             )
                         )  }
                     </ol>

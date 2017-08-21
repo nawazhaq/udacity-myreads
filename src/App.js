@@ -3,12 +3,35 @@ import * as BooksAPI from './BooksAPI'
 import './App.css'
 import ListBooks from './ListBooks'
 import { Route, Link } from 'react-router-dom'
+import Book from './Book'
 
 class BooksApp extends Component {
   state = {
-    books:[],
-    query:""
+    books:[]
   }
+
+/*
+  @param query - search query
+  @param maxResult - limit
+  This function calls the searchBook() only if the search query matches
+  with the SEARCH_TERMS.md file.
+
+ */
+updateQuery = (query,maxResult) => {
+      var searchTerms = ['Android', 'Art', 'Artificial Intelligence', 'Astronomy', 'Austen', 'Baseball', 'Basketball', 'Bhagat', 'Biography', 'Brief', 'Business', 'Camus', 'Cervantes', 'Christie', 'Classics', 'Comics', 'Cook', 'Cricket', 'Cycling', 'Desai', 'Design', 'Development', 'Digital Marketing', 'Drama', 'Drawing', 'Dumas', 'Education', 'Everything', 'Fantasy', 'Film', 'Finance', 'First', 'Fitness', 'Football', 'Future', 'Games', 'Gandhi', 'History', 'History', 'Homer', 'Horror', 'Hugo', 'Ibsen', 'Journey', 'Kafka', 'King', 'Lahiri', 'Larsson', 'Learn', 'Literary Fiction', 'Make', 'Manage', 'Marquez', 'Money', 'Mystery', 'Negotiate', 'Painting', 'Philosophy', 'Photography', 'Poetry', 'Production', 'Program Javascript', 'Programming', 'React', 'Redux', 'River', 'Robotics', 'Rowling', 'Satire', 'Science Fiction', 'Shakespeare', 'Singh', 'Swimming', 'Tale', 'Thrun', 'Time', 'Tolstoy', 'Travel', 'Ultimate', 'Virtual Reality', 'Web Development', 'iOS'];
+      if(query && query.trim()){
+          let searchFlag =  searchTerms.includes(query);
+          if(searchFlag){
+              this.searchBook(query,maxResult);
+          }
+
+      }
+ }
+
+ /*
+     This function calls getAll() books API
+
+ */
 
   componentDidMount(){
     BooksAPI.getAll().then((books) => {
@@ -17,19 +40,33 @@ class BooksApp extends Component {
     })
   }
 
+/*
+     @param book - book object which is updated
+     @param val - shelf to which its being updated
+     This function updates the book shelf
+
+ */
   updateShelf = (book,val) => {
     this.setState((state) =>({
-      books: state.books.map((c) => {
-        if (c.id === book.id) {
-          c.shelf = val
-          return c
+      books: state.books.map((_book) => {
+        if (_book.id === book.id) {
+            _book.shelf = val;
+          return _book;
         }
-        return c
+        return _book;
       })
     }))
 
-    BooksAPI.update(book ,val)
+    BooksAPI.update(book ,val);
   }
+
+
+/*
+     @param query - search query
+     @param maxResults - limit
+     This function renders the books related to the search
+
+*/
 
   searchBook = (query,maxResults) => {
     BooksAPI.search(query ,maxResults).then((books) => {
@@ -45,46 +82,40 @@ class BooksApp extends Component {
     return (
         <div className="app">
 
-          <Route path="/search" render={({history})=>(
+            /*
+             Route for search
+
+             */
+
+          <Route path="/search" render={()=>(
+
               <div className="search-books">
                 <div className="search-books-bar">
-                  <Link to="/" className="close-search">Close</Link>
+                  <Link to={{
+                      pathname: '/',
+                      state: { books: this.state.books }
+                  }} className="close-search">Close</Link>
                   <div className="search-books-input-wrapper">
                     <input type="text" placeholder="Search by title or author"
-                           onChange={(event)=> this.searchBook(event.target.value,maxResult)}/>
+                           onChange={(event)=> this.updateQuery(event.target.value,maxResult)}/>
                   </div>
                 </div>
                 <div className="search-books-results">
                   <ol className="books-grid">
                     {booksList.map((book) =>(
-                            <li key={book.id}>
-                              <div className="book">
-                                <div className="book-top">
-                                  <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                                  <div className="book-shelf-changer">
-                                    <select value="none" onChange={(event) => this.updateShelf(book,event.target.value)}>
-                                      <option value="none" disabled>Move to...</option>
-                                      <option value="currentlyReading">Currently Reading</option>
-                                      <option value="wantToRead">Want to Read</option>
-                                      <option value="read">Read</option>
-                                      <option value="none">None</option>
-                                    </select>
-                                  </div>
-                                </div>
-                                <div className="book-title">{book.title}</div>
-                                <div className="book-authors">{book.authors[0]}</div>
-                              </div>
-                            </li>
+                        <Book key={book.id} book={book} handleBookChangeEvent={this.updateShelf}/>
                         )
                     ) }
-
-
                   </ol>
                 </div>
               </div>
 
           )}
           />
+            /*
+             Route for books listing
+
+             */
           <Route exact path="/" render={()=>(
               <div className="list-books">
                 <div className="list-books-title">
