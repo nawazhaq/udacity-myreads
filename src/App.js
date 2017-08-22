@@ -50,8 +50,12 @@ updateQuery = (query,maxResult) => {
 
 */
 
+
   searchBook = (query,maxResults) => {
     BooksAPI.search(query,maxResults).then((books) => {
+    const none = 'none';
+    books = books.map((book)=> { book.shelf = this.state.books.find((x)=>x.id === book.id) ? this.state.books.find((x)=>x.id === book.id).shelf :
+        none ; return book})
       this.setState({books});
     })
   }
