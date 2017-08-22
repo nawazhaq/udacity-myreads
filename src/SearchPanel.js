@@ -1,15 +1,14 @@
 import React,{Component} from 'react';
-import ListBooks from './ListBooks'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
+import Book from './Book'
 
-class BookShelf extends Component{
+class SearchPanel extends Component{
 
     /*
      @param book - book object which is updated
      @param val - shelf to which its being updated
      This function updates the book shelf
-
      */
     updateShelf = (book,val) => {
         this.setState((state) =>({
@@ -25,28 +24,48 @@ class BookShelf extends Component{
         BooksAPI.update(book ,val);
     }
 
+
+    handleSearchQuery = (book,val) => {
+        this.props.onSearch(book,val);
+    }
+
+
+
+    handleRefresh = () => {
+        this.props.onRefresh();
+    }
+
+
     render(){
         const { books } = this.props;
+        const maxResult = 20;
 
         /*
          Rendering each book attributes and passing the event to the parent component for updates
          */
         return (
-            <div className="list-books">
-                <div className="list-books-title">
-                    <h1>MyReads</h1>
+            <div className="search-books">
+                <div className="search-books-bar">
+                    <Link to={{
+                        pathname: '/',
+                        state: { books: books}
+                    }} className="close-search" onClick={this.handleRefresh}>Close</Link>
+                    <div className="search-books-input-wrapper">
+                        <input type="text" placeholder="Search by title or author"
+                               onChange={(event)=> this.handleSearchQuery(event.target.value,maxResult)}/>
+                    </div>
                 </div>
-                <div className="list-books-content">
-                    <ListBooks books={books} onSelectBook={this.updateShelf}/>
-                </div>
-                <div className="open-search">
-                    <Link to="/search">
-                        Add a book
-                    </Link>
+                <div className="search-books-results">
+                    <ol className="books-grid">
+                        {books.map((book) =>(
+                                <Book key={book.id} book={book} handleBookChangeEvent={this.updateShelf}/>
+                            )
+                        ) }
+                    </ol>
                 </div>
             </div>
            )
     }
 }
 
-export default BookShelf;
+export default SearchPanel;

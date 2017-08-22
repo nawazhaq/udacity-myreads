@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import Book from './Book'
+import BookCategory from './BookCategory'
 
 class ListBooks extends Component{
 
@@ -22,44 +22,11 @@ class ListBooks extends Component{
          */
         return (
             <div>
-            <div className="bookshelf">
-                <h2 className="bookshelf-title">Currently Reading</h2>
-                <div className="bookshelf-books">
-                    <ol className="books-grid">
 
-                        {currently_read.map((book) =>(
+                <BookCategory category="Currently Reading" books={currently_read} onBookChangeEvent={this.handleBookChangeEvent}/>
+                <BookCategory category="Want to Read" books={want_read} onBookChangeEvent={this.handleBookChangeEvent}/>
+                <BookCategory category="Read" books={already_read} onBookChangeEvent={this.handleBookChangeEvent}/>
 
-                                <Book key={book.id} book={book} handleBookChangeEvent={this.handleBookChangeEvent}/>
-                        )
-                        ) }
-
-                    </ol>
-                </div>
-            </div>
-            <div className="bookshelf">
-                <h2 className="bookshelf-title">Want to Read</h2>
-                <div className="bookshelf-books">
-                    <ol className="books-grid">
-                        {want_read.map((book) =>(
-
-                            <Book key={book.id}  book={book} handleBookChangeEvent={this.handleBookChangeEvent}/>
-                            )
-                        )  }
-                    </ol>
-                </div>
-            </div>
-            <div className="bookshelf">
-                <h2 className="bookshelf-title">Read</h2>
-                <div className="bookshelf-books">
-                    <ol className="books-grid">
-                        {already_read.map((book) =>(
-
-                            <Book key={book.id}  book={book} handleBookChangeEvent={this.handleBookChangeEvent}/>
-                            )
-                        )  }
-                    </ol>
-                </div>
-            </div>
         </div>)
     }
 }

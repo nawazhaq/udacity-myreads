@@ -1,34 +1,52 @@
 import React,{Component} from 'react';
+import ListBooks from './ListBooks'
+import { Link } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
 
-class Book extends Component{
+class BookShelf extends Component{
+
+    /*
+     @param book - book object which is updated
+     @param val - shelf to which its being updated
+     This function updates the book shelf
+
+     */
+    updateShelf = (book,val) => {
+        this.setState((state) =>({
+            books: this.props.books.map((_book) => {
+                if (_book.id === book.id) {
+                    _book.shelf = val;
+                    return _book;
+                }
+                return _book;
+            })
+        }))
+
+        BooksAPI.update(book ,val);
+    }
 
     render(){
-        const { book,handleBookChangeEvent } = this.props;
-        let author = book.authors ? book.authors.join(', '): '';
+        const { books } = this.props;
+
         /*
          Rendering each book attributes and passing the event to the parent component for updates
          */
         return (
-            <li key={book.id}>
-                <div className="book">
-                    <div className="book-top">
-                        <div className="book-cover" style={{backgroundImage: `url(${book.imageLinks.thumbnail})`}}></div>
-                        <div className="book-shelf-changer">
-                            <select value={book.shelf} onChange={(event) => handleBookChangeEvent(book,event.target.value)}>
-                                <option value="none" disabled>Move to...</option>
-                                <option value="currentlyReading">Currently Reading</option>
-                                <option value="wantToRead">Want to Read</option>
-                                <option value="read">Read</option>
-                                <option value="none">None</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="book-title">{book.title}</div>
-                    <div className="book-authors">{author}</div>
+            <div className="list-books">
+                <div className="list-books-title">
+                    <h1>MyReads</h1>
                 </div>
-            </li>
+                <div className="list-books-content">
+                    <ListBooks books={books} onSelectBook={this.updateShelf}/>
+                </div>
+                <div className="open-search">
+                    <Link to="/search">
+                        Add a book
+                    </Link>
+                </div>
+            </div>
            )
     }
 }
 
-export default Book;
+export default BookShelf;
